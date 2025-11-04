@@ -1,0 +1,178 @@
+#+TITLE: GitHub Repository Setup Guide
+#+AUTHOR: Scryer Prolog Workshop
+#+DATE: 2025-11-04
+
+* Repository Information
+
+*Repository Name:* =scryer-prolog-workshop=
+
+*Organization/Owner:* =aygp-dr=
+
+*Visibility:* Public
+
+*Description:*
+#+BEGIN_EXAMPLE
+A comprehensive workshop for learning Scryer Prolog with literate programming using Org-mode. Includes automated setup, examples, and LSP support for Emacs.
+#+END_EXAMPLE
+
+* Topics (5 recommended)
+
+Add these topics to your repository for better discoverability:
+
+1. =prolog= - Core language
+2. =scryer-prolog= - Specific implementation
+3. =literate-programming= - Development methodology
+4. =org-mode= - Documentation tool
+5. =rust= - Implementation language
+
+* Setup Methods
+
+** Method 1: Using GitHub CLI (Automated)
+
+#+BEGIN_SRC bash
+# Install gh CLI if needed
+sudo pkg install gh  # FreeBSD
+# brew install gh    # macOS
+
+# Authenticate
+gh auth login
+
+# Run the setup script
+./github-setup.sh
+#+END_SRC
+
+** Method 2: Manual Setup via Web Interface
+
+1. Go to https://github.com/new or https://github.com/organizations/aygp-dr/repositories/new
+
+2. *Configure repository:*
+   - Repository name: =scryer-prolog-workshop=
+   - Description: =A comprehensive workshop for learning Scryer Prolog with literate programming using Org-mode. Includes automated setup, examples, and LSP support for Emacs.=
+   - Visibility: *Public*
+   - ❌ Do NOT initialize with README, .gitignore, or license (we already have these)
+
+3. *Click "Create repository"*
+
+4. *Add topics:*
+   - Click the ⚙️ gear icon next to "About"
+   - In the "Topics" field, add: =prolog=, =scryer-prolog=, =literate-programming=, =org-mode=, =rust=
+   - Click "Save changes"
+
+5. *Push your local repository:*
+   #+BEGIN_SRC bash
+   git remote add origin git@github.com:aygp-dr/scryer-prolog-workshop.git
+   git push -u origin main
+   #+END_SRC
+
+** Method 3: Using GitHub CLI Manually
+
+#+BEGIN_SRC bash
+# Create repository
+gh repo create aygp-dr/scryer-prolog-workshop \
+  --public \
+  --description "A comprehensive workshop for learning Scryer Prolog with literate programming using Org-mode. Includes automated setup, examples, and LSP support for Emacs." \
+  --source=. \
+  --remote=origin \
+  --push
+
+# Add topics
+gh api repos/aygp-dr/scryer-prolog-workshop/topics \
+  --method PUT \
+  --field names[]="prolog" \
+  --field names[]="scryer-prolog" \
+  --field names[]="literate-programming" \
+  --field names[]="org-mode" \
+  --field names[]="rust"
+#+END_SRC
+
+* Repository Features to Enable
+
+After creating the repository, consider enabling:
+
+** Issues
+- Enable issues for bug reports and feature requests
+- Consider using issue templates
+
+** Discussions
+- Enable discussions for Q&A and community interaction
+- Great for workshop participants to ask questions
+
+** GitHub Pages
+- Optionally publish documentation via GitHub Pages
+- Could host rendered org-mode files as HTML
+
+** Actions
+- Consider setting up CI/CD for:
+  - Testing org-mode tangling
+  - Building Scryer Prolog
+  - Running example programs
+
+* Social Preview
+
+Consider adding a repository social preview image:
+1. Go to repository Settings
+2. Scroll to "Social preview"
+3. Upload an image (1280x640px recommended)
+4. Suggested content: Scryer Prolog logo + workshop title
+
+* Additional Metadata
+
+*Website URL:* https://www.scryer.pl/ (add to repository)
+
+*License:* BSD-3-Clause (already in repository)
+
+* README Badges
+
+The README now includes these badges:
+- ✓ License badge (BSD-3-Clause)
+- ✓ Rust badge
+- ✓ FreeBSD badge
+- ✓ Org Mode badge
+
+* After Setup
+
+Once the repository is created:
+
+1. *Verify the repository:*
+   #+BEGIN_SRC bash
+   gh repo view aygp-dr/scryer-prolog-workshop --web
+   #+END_SRC
+
+2. *Clone on another machine:*
+   #+BEGIN_SRC bash
+   git clone https://github.com/aygp-dr/scryer-prolog-workshop.git
+   cd scryer-prolog-workshop
+   make help
+   #+END_SRC
+
+3. *Share with others:*
+   - Repository URL: =https://github.com/aygp-dr/scryer-prolog-workshop=
+   - Clone URL (HTTPS): =https://github.com/aygp-dr/scryer-prolog-workshop.git=
+   - Clone URL (SSH): =git@github.com:aygp-dr/scryer-prolog-workshop.git=
+
+* Promoting Your Workshop
+
+Consider sharing on:
+- Scryer Prolog discussions/IRC (#scryer on Libera.Chat)
+- Prolog community forums
+- Reddit: r/prolog
+- Hacker News (Show HN)
+- Twitter/Mastodon with hashtags: #prolog #scryerprolog #literateprogramming
+
+* Maintenance
+
+Keep the workshop updated:
+- Sync with latest Scryer Prolog releases
+- Update examples with new features
+- Respond to issues and pull requests
+- Keep dependencies in Emacs config current
+
+---
+
+*Repository Status:* Ready to push ✓
+
+*Current Branch:* main
+
+*Total Commits:* 11
+
+*Files:* 18+ (including generated .pl files)

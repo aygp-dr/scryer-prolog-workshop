@@ -1,0 +1,193 @@
+#+TITLE: Tmux Session Guide
+#+AUTHOR: Scryer Prolog Workshop
+#+DATE: 2025-11-04
+
+* Active Session
+
+A tmux session named *=scryer-workshop=* is currently running with Scryer Prolog active.
+
+** Attach to the Session
+
+#+BEGIN_SRC bash
+tmux attach -t scryer-workshop
+#+END_SRC
+
+Or simply:
+
+#+BEGIN_SRC bash
+tmux a -t scryer-workshop
+#+END_SRC
+
+** Session Status
+
+*Current State:* Scryer Prolog REPL is running
+*Files Loaded:* =hello.pl=
+*Working Directory:* =/home/jwalsh/ghq/github.com/aygp-dr/scryer-prolog-workshop=
+
+** What's Been Done
+
+The session has already:
+1. ✅ Compiled and installed Scryer Prolog (7m 15s)
+2. ✅ Started the REPL with =make run=
+3. ✅ Tested basic queries (=write=, =nl=)
+4. ✅ Loaded =hello.pl= successfully
+5. ✅ Executed =say_hello= predicate
+
+* Quick Commands While Attached
+
+Once you attach to the session, you can:
+
+** Prolog Commands
+#+BEGIN_SRC prolog
+% List all predicates
+?- listing.
+
+% Test greet with a name
+?- greet('Alice').
+
+% See all greetings (press SPACE for next, . to stop)
+?- greeting(X).
+
+% Load another file
+?- consult('facts.pl').
+
+% Exit Scryer Prolog
+?- halt.
+#+END_SRC
+
+** Tmux Commands
+
+*Detach from session:* =Ctrl-b d=
+*Kill session:* =Ctrl-b :kill-session= or =Ctrl-d= (after halting Prolog)
+*Create new window:* =Ctrl-b c=
+*Switch windows:* =Ctrl-b n= (next), =Ctrl-b p= (previous)
+*Split pane horizontally:* =Ctrl-b %=
+*Split pane vertically:* =Ctrl-b "=
+*Switch panes:* =Ctrl-b o=
+
+* Tmux Session Management
+
+** List all sessions
+#+BEGIN_SRC bash
+tmux ls
+#+END_SRC
+
+** Create a new window in the session
+#+BEGIN_SRC bash
+tmux new-window -t scryer-workshop -n "terminal"
+#+END_SRC
+
+** Send commands without attaching
+#+BEGIN_SRC bash
+# Send a Prolog query
+tmux send-keys -t scryer-workshop "factorial(5, X)." C-m
+
+# Capture output
+tmux capture-pane -t scryer-workshop -p
+#+END_SRC
+
+** Kill the session when done
+#+BEGIN_SRC bash
+tmux kill-session -t scryer-workshop
+#+END_SRC
+
+* Workshop Files Available
+
+All these files are available in the current directory and can be consulted:
+
+- =hello.pl= - Basic greetings and examples
+- =facts.pl= - Family relationships and queries
+- =lists.pl= - List operations
+- =recursion.pl= - Factorial, Fibonacci, ranges
+- =scryer_features.pl= - DCGs and format examples
+- =constraints.pl= - CLP(Z) examples
+- =tabling.pl= - Tabled Fibonacci
+
+* Example Session
+
+#+BEGIN_SRC prolog
+?- consult('facts.pl').
+   true.
+
+?- parent(tom, X).
+   X = bob
+;  X = liz.
+
+?- grandparent(tom, X).
+   X = ann
+;  X = pat.
+
+?- consult('recursion.pl').
+   true.
+
+?- factorial(5, X).
+   X = 120.
+
+?- range(1, 5, X).
+   X = [1,2,3,4,5].
+#+END_SRC
+
+* Troubleshooting
+
+** Can't attach to session
+#+BEGIN_SRC bash
+# Check if session exists
+tmux ls
+
+# If it doesn't exist, start a new one
+make run
+#+END_SRC
+
+** Scryer Prolog not responding
+- Press =Ctrl-c= to interrupt
+- Type =halt.= to exit cleanly
+- If stuck, detach with =Ctrl-b d= and kill the session
+
+** Need to restart
+#+BEGIN_SRC bash
+# Kill the session
+tmux kill-session -t scryer-workshop
+
+# Start fresh
+make run
+#+END_SRC
+
+* Tips
+
+1. *Keep the session detached* while working on code
+2. *Use =make tangle=* in another terminal when you edit =setup.org=
+3. *Reload files* in Scryer with =consult('file.pl')=
+4. *Detach instead of killing* to preserve your REPL history
+5. *Use tmux scrollback:* =Ctrl-b [= then arrow keys, =q= to exit
+
+* Advanced Tmux Features
+
+** Scrollback mode
+#+BEGIN_EXAMPLE
+Ctrl-b [           # Enter copy/scroll mode
+Up/Down arrows     # Scroll
+q                  # Exit
+#+END_EXAMPLE
+
+** Resize panes
+#+BEGIN_SRC bash
+Ctrl-b :resize-pane -L 10    # Left 10 cols
+Ctrl-b :resize-pane -R 10    # Right 10 cols
+Ctrl-b :resize-pane -D 5     # Down 5 rows
+Ctrl-b :resize-pane -U 5     # Up 5 rows
+#+END_SRC
+
+** Save session history
+#+BEGIN_SRC bash
+# Capture entire pane history to file
+tmux capture-pane -t scryer-workshop -p -S - > session.log
+#+END_SRC
+
+---
+
+*Session Name:* =scryer-workshop=
+*Status:* Running ✓
+*Scryer Prolog:* v0.10.0
+*Installation:* =~/.cargo/bin/scryer-prolog=
+
+To attach: =tmux attach -t scryer-workshop=

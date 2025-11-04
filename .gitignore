@@ -1,0 +1,44 @@
+# Emacs backup files
+*~
+*.elc
+.#*
+
+# Org-mode temporary files
+.org-id-locations
+*.org~
+ltximg/
+
+# Generated Prolog files (from tangling)
+# Uncomment if you don't want to track generated files:
+# *.pl
+# *.sh
+
+# Scryer Prolog
+.scryer-history
+
+# Build artifacts
+target/
+*.o
+*.so
+*.dylib
+
+# Cargo
+Cargo.lock
+.cargo/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+.directory
+
+# IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+
+# Temporary files
+*.tmp
+*.bak
+*.log
