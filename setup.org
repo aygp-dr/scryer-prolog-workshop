@@ -1,0 +1,406 @@
+#+TITLE: Scryer Prolog Workshop - Base Setup
+#+AUTHOR: Scryer Prolog Workshop
+#+DATE: 2025-11-04
+#+PROPERTY: header-args:prolog :tangle hello.pl
+#+PROPERTY: header-args:sh :tangle setup.sh :shebang "#!/bin/sh"
+
+* Introduction
+
+Welcome to the Scryer Prolog Workshop! This document provides a comprehensive setup guide for getting started with Scryer Prolog, a modern ISO Prolog implementation written in Rust.
+
+** What is Scryer Prolog?
+
+Scryer Prolog is a free software ISO Prolog system that aims to be:
+- An industrial-strength production environment
+- A testbed for bleeding-edge research in logic and constraint programming
+- A modern implementation with advanced features like tabling, constraints, and FFI
+
+** System Requirements
+
+This workshop is tested on:
+- FreeBSD 14.3-RELEASE
+- But also works on Linux, macOS, and Windows
+
+* Installation
+
+** Prerequisites
+
+You will need:
+1. Emacs (for org-mode tangling)
+2. Rust toolchain (cargo)
+3. Git
+
+** Quick Start
+
+From the command line:
+
+#+BEGIN_SRC sh :tangle no
+# Test dependencies
+make test-deps
+
+# Install dependencies (if needed)
+make install-deps
+
+# Complete setup
+make setup
+
+# Tangle org files
+make tangle
+
+# Run Scryer Prolog
+make run
+#+END_SRC
+
+** Manual Installation
+
+*** Installing Rust
+
+#+BEGIN_SRC sh
+# Install Rust toolchain via rustup
+if ! command -v cargo >/dev/null 2>&1; then
+    echo "Installing Rust..."
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+    source $HOME/.cargo/env
+fi
+#+END_SRC
+
+*** Installing Scryer Prolog
+
+#+BEGIN_SRC sh
+# Install from crates.io
+cargo install --locked scryer-prolog
+
+# Or install from git (latest version)
+# cargo install --locked --git https://github.com/mthom/scryer-prolog.git
+#+END_SRC
+
+*** Verify Installation
+
+#+BEGIN_SRC sh
+# Check version
+scryer-prolog --version
+
+# Quick test
+echo "?- write('Hello, Prolog!'), nl." | scryer-prolog
+#+END_SRC
+
+* Getting Started with Prolog
+
+** Hello World
+
+Let's create our first Prolog program:
+
+#+BEGIN_SRC prolog :tangle hello.pl
+% hello.pl - Your first Scryer Prolog program
+
+% Facts: Basic statements about the world
+greeting('Hello, World!').
+greeting('Welcome to Scryer Prolog!').
+greeting('Prolog is awesome!').
+
+% Rule: Define relationships
+say_hello :-
+    greeting(Message),
+    write(Message), nl.
+
+% Predicate to greet by name
+greet(Name) :-
+    write('Hello, '), write(Name), write('!'), nl.
+
+% Main entry point
+main :-
+    write('=== Scryer Prolog Workshop ==='), nl,
+    say_hello,
+    write('Available greetings:'), nl,
+    forall(greeting(G), (write('  - '), write(G), nl)),
+    halt.
+#+END_SRC
+
+** Running Your First Program
+
+After tangling this file with =make tangle=, you can run it:
+
+#+BEGIN_SRC sh :tangle no
+# Interactive mode
+scryer-prolog hello.pl
+
+# Try these queries:
+# ?- say_hello.
+# ?- greet('Alice').
+# ?- greeting(X).
+
+# Non-interactive mode
+scryer-prolog -g main hello.pl
+#+END_SRC
+
+* Workshop Exercises
+
+** Exercise 1: Facts and Queries
+
+#+BEGIN_SRC prolog :tangle facts.pl
+% facts.pl - Learning about facts and queries
+
+% Family relationships
+parent(tom, bob).
+parent(tom, liz).
+parent(bob, ann).
+parent(bob, pat).
+parent(pat, jim).
+
+% Gender facts
+male(tom).
+male(bob).
+male(jim).
+male(pat).
+female(liz).
+female(ann).
+
+% Rules derived from facts
+father(X, Y) :- parent(X, Y), male(X).
+mother(X, Y) :- parent(X, Y), female(X).
+
+grandparent(X, Z) :- parent(X, Y), parent(Y, Z).
+
+sibling(X, Y) :-
+    parent(P, X),
+    parent(P, Y),
+    X \= Y.
+
+% Example queries to try:
+% ?- parent(tom, X).
+% ?- grandparent(tom, X).
+% ?- sibling(ann, X).
+#+END_SRC
+
+** Exercise 2: Lists
+
+#+BEGIN_SRC prolog :tangle lists.pl
+% lists.pl - Working with lists in Prolog
+
+% List membership
+my_member(X, [X|_]).
+my_member(X, [_|T]) :- my_member(X, T).
+
+% List length
+my_length([], 0).
+my_length([_|T], N) :- my_length(T, N1), N is N1 + 1.
+
+% List append
+my_append([], L, L).
+my_append([H|T1], L2, [H|T3]) :- my_append(T1, L2, T3).
+
+% List reversal
+my_reverse([], []).
+my_reverse([H|T], R) :- my_reverse(T, RT), my_append(RT, [H], R).
+
+% Sum of list
+sum_list([], 0).
+sum_list([H|T], Sum) :- sum_list(T, Rest), Sum is H + Rest.
+
+% Example queries:
+% ?- my_member(3, [1,2,3,4]).
+% ?- my_length([a,b,c], N).
+% ?- my_append([1,2], [3,4], X).
+% ?- my_reverse([1,2,3], X).
+% ?- sum_list([1,2,3,4,5], X).
+#+END_SRC
+
+** Exercise 3: Recursion and Arithmetic
+
+#+BEGIN_SRC prolog :tangle recursion.pl
+% recursion.pl - Recursive predicates
+
+% Factorial
+factorial(0, 1).
+factorial(N, F) :-
+    N > 0,
+    N1 is N - 1,
+    factorial(N1, F1),
+    F is N * F1.
+
+% Fibonacci
+fibonacci(0, 0).
+fibonacci(1, 1).
+fibonacci(N, F) :-
+    N > 1,
+    N1 is N - 1,
+    N2 is N - 2,
+    fibonacci(N1, F1),
+    fibonacci(N2, F2),
+    F is F1 + F2.
+
+% Range generation
+range(N, N, [N]).
+range(M, N, [M|T]) :-
+    M < N,
+    M1 is M + 1,
+    range(M1, N, T).
+
+% Example queries:
+% ?- factorial(5, X).
+% ?- fibonacci(10, X).
+% ?- range(1, 10, X).
+#+END_SRC
+
+** Exercise 4: Scryer-Specific Features
+
+#+BEGIN_SRC prolog :tangle scryer_features.pl
+% scryer_features.pl - Exploring Scryer Prolog features
+
+:- use_module(library(lists)).
+:- use_module(library(format)).
+:- use_module(library(dcgs)).
+
+% Using format for output
+demo_format :-
+    format("Hello from format!~n", []),
+    format("Number: ~d, Float: ~f~n", [42, 3.14159]),
+    format("String: ~s~n", ["Scryer Prolog"]).
+
+% DCG (Definite Clause Grammar) example
+sentence --> noun_phrase, verb_phrase.
+noun_phrase --> determiner, noun.
+verb_phrase --> verb, noun_phrase.
+
+determiner --> [the].
+determiner --> [a].
+noun --> [cat].
+noun --> [dog].
+verb --> [chases].
+verb --> [sees].
+
+% Using library(lists)
+demo_lists :-
+    List = [1, 2, 3, 4, 5],
+    length(List, Len),
+    format("List length: ~d~n", [Len]),
+    sum_list(List, Sum),
+    format("List sum: ~d~n", [Sum]),
+    reverse(List, Rev),
+    format("Reversed: ~w~n", [Rev]).
+
+% Example queries:
+% ?- demo_format.
+% ?- phrase(sentence, [the, cat, chases, a, dog]).
+% ?- demo_lists.
+#+END_SRC
+
+* Advanced Topics
+
+** Constraint Logic Programming
+
+Scryer Prolog includes built-in CLP(B) and CLP(Z) libraries for constraint solving.
+
+#+BEGIN_SRC prolog :tangle constraints.pl
+% constraints.pl - Introduction to constraints
+
+:- use_module(library(clpz)).
+
+% Simple arithmetic constraints
+demo_clpz :-
+    X #> 0,
+    X #< 10,
+    X #= Y + 3,
+    Y #= 5,
+    write('X = '), write(X), nl.
+
+% N-Queens problem (4x4 board)
+n_queens(N, Qs) :-
+    length(Qs, N),
+    Qs ins 1..N,
+    safe_queens(Qs).
+
+safe_queens([]).
+safe_queens([Q|Qs]) :-
+    safe_queens(Qs, Q, 1),
+    safe_queens(Qs).
+
+safe_queens([], _, _).
+safe_queens([Q|Qs], Q0, D0) :-
+    Q0 #\= Q,
+    abs(Q0 - Q) #\= D0,
+    D1 is D0 + 1,
+    safe_queens(Qs, Q0, D1).
+
+% Example queries:
+% ?- demo_clpz.
+% ?- n_queens(4, Qs), label(Qs).
+#+END_SRC
+
+** Tabling for Efficient Computation
+
+#+BEGIN_SRC prolog :tangle tabling.pl
+% tabling.pl - Using tabling for memoization
+
+:- use_module(library(tabling)).
+
+% Tabled fibonacci (much faster!)
+:- table fib_tabled/2.
+
+fib_tabled(0, 0).
+fib_tabled(1, 1).
+fib_tabled(N, F) :-
+    N > 1,
+    N1 is N - 1,
+    N2 is N - 2,
+    fib_tabled(N1, F1),
+    fib_tabled(N2, F2),
+    F is F1 + F2.
+
+% Compare with non-tabled version
+% The tabled version is exponentially faster for large N
+
+% Example queries:
+% ?- time(fib_tabled(30, X)).
+#+END_SRC
+
+* Useful Resources
+
+** Documentation
+- Official site: https://www.scryer.pl/
+- GitHub: https://github.com/mthom/scryer-prolog
+- Library docs: https://www.scryer.pl/documentation.html
+
+** Learning Prolog
+- The Power of Prolog: https://www.metalevel.at/prolog
+- Learn Prolog Now!: http://www.learnprolognow.org/
+- SWI-Prolog docs (mostly compatible): https://www.swi-prolog.org/
+
+** Community
+- GitHub Issues: https://github.com/mthom/scryer-prolog/issues
+- IRC: #scryer on Libera.Chat
+
+* Workflow
+
+** Standard Development Cycle
+
+1. Edit this =setup.org= file or create new =.org= files
+2. Tangle to extract code: =make tangle=
+3. Run your Prolog programs: =make run-file FILE=hello.pl=
+4. Test and iterate
+
+** Org-Mode Tips
+
+- Use =C-c C-v t= in Emacs to tangle the current file
+- Use =C-c C-v C-t= to tangle all files
+- Use =:tangle filename.pl= to specify output file
+- Use =:tangle no= to prevent tangling a code block
+
+* License and Attribution
+
+This workshop material is provided as-is for educational purposes.
+
+Scryer Prolog is licensed under BSD-3-Clause.
+See: https://github.com/mthom/scryer-prolog/blob/master/LICENSE
+
+* Conclusion
+
+You now have a complete setup for working with Scryer Prolog!
+
+Next steps:
+1. Run =make tangle= to generate all Prolog files from this document
+2. Try the examples: =scryer-prolog hello.pl=
+3. Experiment with the exercises
+4. Explore the advanced features
+
+Happy Prologging! 🚀
