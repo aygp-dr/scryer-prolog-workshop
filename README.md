@@ -1,5 +1,10 @@
 # Scryer Prolog Workshop
 
+[![License: BSD-3-Clause](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![Rust](https://img.shields.io/badge/rust-%23000000.svg?style=flat&logo=rust&logoColor=white)](https://www.rust-lang.org/)
+[![FreeBSD](https://img.shields.io/badge/-FreeBSD-%23AB2B28?style=flat&logo=freebsd&logoColor=white)](https://www.freebsd.org/)
+[![Org Mode](https://img.shields.io/badge/Org-literate%20programming-77aa99?style=flat&logo=org&logoColor=white)](https://orgmode.org/)
+
 A comprehensive workshop for learning [Scryer Prolog](https://www.scryer.pl/), a modern ISO Prolog implementation written in Rust. This repository uses literate programming with Org-mode for an integrated learning and development experience.
 
 ## Overview
